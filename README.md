@@ -7,4 +7,5 @@ Inertial Navigation System (INS) data are used as inputs. The set of variablesiz
 roads and curved uphill - downhill ground surfaces. The voxel pattern representation is used to efficiently model obstacles, which are further segmented into: static obstacles and moving obstacles
 
 Watch the result in the video below.
+
 https://youtu.be/o5oqtT6bXa0
