@@ -9,6 +9,8 @@ Watch the result in the video below.
 
 https://youtu.be/o5oqtT6bXa0
 
+![picture1](https://user-images.githubusercontent.com/5465785/43979846-f716f6b8-9ce3-11e8-8a52-9daa12f71aa1.png)
+
 The algorithm is described in:
 
 A. Asvadi, C. Premebida, P. Peixoto, and U. Nunes, “3D Lidar-based Static and Moving Obstacle Detection in Driving Environments: an approach based on voxels and multi-region ground planes,” Robotics and Autonomous Systems (RAS), vol. 83, pp. 299–311, September 2016. DOI: 10.1016/j.robot.2016.06.007 
