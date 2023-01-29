@@ -1,13 +1,14 @@
-function st = Fstt                                                              % setting [directory, number of frames, map setting]
+function st = Fstt(i)                                                              % setting [directory, number of frames, map setting]
 
 %% main directories [1: moving, 18: car stoped] 
-st.dr.dnm  = 1;    % (14) 1 - 12 - 17 - 18  % setting   % 1, 12, 17, [18-curve], [20-downtown]        % sub-directory number (dname - 1)
+st.dr.dnm  = i;    % (14) 1 - 12 - 17 - 18  % setting   % 1, 12, 17, [18-curve], [20-downtown]        % sub-directory number (dname - 1)
 st.dr.cam  = 2;                                                                                     % left/right camera
 st.dr.dst  = 'training'; %  'testing'                                                              % training/testing dataset
-st.dr.mdr  = '/media/ali/TOSHIBA EXT/dataset_ext/dataset_tracking/';                                % main directoy of dataset
+st.dr.mdr  = '/media/yihang/LYH/kitti_tracking/data_tracking_dataset/';                                % main directoy of dataset
 % st.dr.mdr  = 'F:\dataset_ext\dataset_tracking';
 st.dr.pts  = fullfile(st.dr.mdr, st.dr.dst, sprintf('velodyne/%04d', st.dr.dnm - 1));               % directory of velodyne points
 st.dr.img  = fullfile(st.dr.mdr, st.dr.dst, sprintf('image_%02d/%04d', st.dr.cam, st.dr.dnm - 1));  % directory of color images
+st.dr.pre  = fullfile(st.dr.mdr, st.dr.dst, sprintf('predict_smos/%04d', st.dr.dnm - 1));           % directory of predict for label
 st.dr.lbl  = fullfile(st.dr.mdr, st.dr.dst, sprintf('label_%02d', st.dr.cam));                      % directory of tracklet labels
 st.dr.oxt  = fullfile(st.dr.mdr, st.dr.dst, 'oxts');                                                % directory of pose
 st.dr.clb  = fullfile(st.dr.mdr, st.dr.dst, 'calib');                                               % directory of calibration
@@ -51,8 +52,8 @@ t.rct      = reshape(clb(5, 1 : 9), [3, 3])'; t.rct(:, 4) = 0; t.rct(4,:) = [0 0
 t.v2c      = reshape(clb(6, 1 : 12), [4, 3])'; t.v2c(4,:) = [0 0 0 1];                              % load 3x4 velodyne to camera matrix (R|t)
 t.clb      = t.p2 * t.rct * t.v2c; st.dt.clb = t.clb(1:4, 1:3)';                                    % project velodyne points to image plane
 %% pose
-trm        = load(sprintf('%s/%04d', fullfile(st.dr.mdr, st.dr.dst, 'pose'), st.dr.dnm - 1));       % read from directory of poses           
-st.dt.pose = trm.pose;                                                                              % transformation matrix in camera coordinate
+trm        = load(sprintf('%s/%04d.txt', fullfile(st.dr.mdr, st.dr.dst, 'pose_lio_kitti'), st.dr.dnm - 1));       % read from directory of poses           
+st.dt.pose = trm;                                                                              % transformation matrix in camera coordinate
 %% vehicle model
 st.mdl     = model3d(fullfile('model3d', 'passat.3ds'));
 st.mdl     = qrot(st.mdl, [0 0 1], pi/2);

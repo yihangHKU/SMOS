@@ -34,9 +34,12 @@ function pts  = FJloa(st, frame)
 % output: pts.[pts ptn rtn trn] all points 
 
 %% transformation matrixes [rotation 3x3, translation 3x1]
-transform     = st.dt.pose(:, :, frame);                                     % transformation matrix in camera coordinate
-pts.rtn       = transform(1:3, 1:3);                                         % rotation    3x3
-pts.trn       = transform(1:3, 4);                                           % translation 3x1
+% transform     = st.dt.pose(:, :, frame);                                     % transformation matrix in camera coordinate
+% pts.rtn       = transform(1:3, 1:3);                                         % rotation    3x3
+% pts.trn       = transform(1:3, 4);                                           % translation 3x1
+transform = st.dt.pose(frame,:);
+pts.rtn = [transform(1:3);transform(5:7);transform(9:11)];
+pts.trn = [transform(4);transform(8);transform(12)];
 %% velodyne points [x, y, z, r] total number of pointsx4
 fid.pts       = fopen(sprintf('%s/%06d.bin', st.dr.pts, frame - 1), 'rb');   % read from directory of points (number of frames in each seq.)
 velodyne      = fread(fid.pts, [4 inf], 'single')';                          % velodyne points [x, y, z, r] (total number of pointsx4)

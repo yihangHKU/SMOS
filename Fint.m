@@ -12,10 +12,13 @@ prv             = FIloa(st, frm);                        % load points
 prv             = FItns(prv, ref);                       % transform to the current coordinate
 hst.pts         = [hst.pts; prv.prj];                    % integrate points: insert new points         
 end
-end     
+end 
+
 hst             = FIcrp(hst, st, frame);                 % crop points to the inside the local grid and image
-prm             = FIprm(hst.pts, st);                    % compute surface pieces' parameters                  
+prm             = FIprm(hst.pts, st);                    % compute surface pieces' parameters   
+
 In              = Fvox(prm, st, hst.pts);
+
 
 end
 
@@ -25,15 +28,19 @@ function pts    = FIloa(st, frame)
 % output: pts.[pts ptn rtn trn] all points 
 
 %% transformation matrixes [rotation 3x3, translation 3x1]
-transform       = st.dt.pose(:, :, frame);                                     % transformation matrix in camera coordinate
-pts.rtn         = transform(1:3, 1:3);                                         % rotation    3x3
-pts.trn         = transform(1:3, 4);                                           % translation 3x1
+% transform       = st.dt.pose(:, :, frame);                                     % transformation matrix in camera coordinate
+% pts.rtn         = transform(1:3, 1:3);                                         % rotation    3x3
+% pts.trn         = transform(1:3, 4);                                           % translation 3x1
+transform = st.dt.pose(frame,:);
+pts.rtn = [transform(1:3);transform(5:7);transform(9:11)];
+pts.trn = [transform(4);transform(8);transform(12)];
 %% velodyne points [x, y, z, r] total number of pointsx4
 fid.pts         = fopen(sprintf('%s/%06d.bin', st.dr.pts, frame - 1), 'rb');   % read from directory of points (number of frames in each seq.)
 velodyne        = fread(fid.pts, [4 inf], 'single')';                          % velodyne points [x, y, z, r] (total number of pointsx4)
 fclose(fid.pts);                                                               % close fid
 pts.pts         = velodyne(:, 1:3);                                            % velodyne points [x, y, z] (total number of pointsx3)
 pts.ptn         = pts.pts * pts.rtn' + repmat(pts.trn', size(pts.pts, 1), 1);  % transformed velodyne points (Xp = RX + T)
+
 
 end
 
@@ -119,8 +126,10 @@ t              = (pc(:, 3) - pln(1) .* pc(:,1) - pln(2) * pc(:, 2) - pln(3)) ...
 pp             = [pc(:, 1) + nrm(1) .* t, pc(:, 2) + nrm(2) * t, pc(:, 3) + nrm(3) * t];       % projected points on the surface
 id             = ((pc(:, 3) - pp(:, 3)) < st.rd.rm) | (abs((pc(:, 3) - pp(:, 3))) < st.rd.rm); % remove points under height                      
 pc(id, :)      = []; 
+
 pts.pts        = [pts.pts; pc];                                                                % velodyne points in local grid
 end
+
 %% voxelize points 
 pts.idx        = floor([(pts.pts(:,1) - st.vm.xb)/st.vx.x + 1, (pts.pts(:,2) - ...             % quantize and transform point's index 
                  st.vm.yr)/st.vx.y + 1, (pts.pts(:,3) - st.vm.zd) / st.vx.z + 1]);
