@@ -7,16 +7,16 @@ st.dr.dst  = 'training'; %  'testing'                                           
 st.dr.mdr  = '/media/yihang/LYH/kitti_tracking/data_tracking_dataset/';                                % main directoy of dataset
 % st.dr.mdr  = 'F:\dataset_ext\dataset_tracking';
 st.dr.pts  = fullfile(st.dr.mdr, st.dr.dst, sprintf('velodyne/%04d', st.dr.dnm - 1));               % directory of velodyne points
-st.dr.img  = fullfile(st.dr.mdr, st.dr.dst, sprintf('image_%02d/%04d', st.dr.cam, st.dr.dnm - 1));  % directory of color images
+% st.dr.img  = fullfile(st.dr.mdr, st.dr.dst, sprintf('image_%02d/%04d', st.dr.cam, st.dr.dnm - 1));  % directory of color images
 st.dr.pre  = fullfile(st.dr.mdr, st.dr.dst, sprintf('predict_smos/%04d', st.dr.dnm - 1));           % directory of predict for label
-st.dr.lbl  = fullfile(st.dr.mdr, st.dr.dst, sprintf('label_%02d', st.dr.cam));                      % directory of tracklet labels
-st.dr.oxt  = fullfile(st.dr.mdr, st.dr.dst, 'oxts');                                                % directory of pose
-st.dr.clb  = fullfile(st.dr.mdr, st.dr.dst, 'calib');                                               % directory of calibration
+% st.dr.lbl  = fullfile(st.dr.mdr, st.dr.dst, sprintf('label_%02d', st.dr.cam));                      % directory of tracklet labels
+% st.dr.oxt  = fullfile(st.dr.mdr, st.dr.dst, 'oxts');                                                % directory of pose
+% st.dr.clb  = fullfile(st.dr.mdr, st.dr.dst, 'calib');                                               % directory of calibration
 st.dr.rec  = fullfile(st.dr.mdr, 'result', filesep);                                                % directory of record
-st.dr.nsq  = numel(dir(fullfile(st.dr.mdr, st.dr.dst, sprintf('image_%02d', st.dr.cam)))) - 2;      % total number of tracking sequences
+st.dr.nsq  = numel(dir(fullfile(st.dr.mdr, st.dr.dst, sprintf('velodyne')))) - 2;      % total number of tracking sequences
 %% start and end frames
 st.st.st   = 1;                                                                                     % start frames
-st.st.tn   = size(dir(sprintf('%s/*.png',st.dr.img)), 1);                                           % number of frames
+st.st.tn   = size(dir(sprintf('%s/*.bin',st.dr.pts)), 1);                                           % number of frames
 %% local grid
 st.bias    = 1.73;
 st.vm.xf   = +25;                                                                                   % x direction and front (x: +5 ~ +55)
@@ -46,11 +46,11 @@ st.fr.sz   = 0.5;                                                               
 st.fr.bsz  = ceil(st.fr.sz / min([st.vx.x, st.vx.y, st.vx.z]));                                     % radiuos of volume to search (size of cells)
 st.fr.frg  = 1;
 %% calibration
-clb        = dlmread(sprintf('%s/%04d.txt', st.dr.clb, st.dr.dnm - 1), ' ', 0, 1);                  % [read data, delimiter, row offset, column offset]
-t.p2       = reshape(clb(st.dr.cam + 1, 1 : 12), [4, 3])'; t.p2(4, :) = [0 0 0 1];                  % load 3x4 P2 camera calibration matrix
-t.rct      = reshape(clb(5, 1 : 9), [3, 3])'; t.rct(:, 4) = 0; t.rct(4,:) = [0 0 0 1];              % load 3x3 image calibration matrix
-t.v2c      = reshape(clb(6, 1 : 12), [4, 3])'; t.v2c(4,:) = [0 0 0 1];                              % load 3x4 velodyne to camera matrix (R|t)
-t.clb      = t.p2 * t.rct * t.v2c; st.dt.clb = t.clb(1:4, 1:3)';                                    % project velodyne points to image plane
+% clb        = dlmread(sprintf('%s/%04d.txt', st.dr.clb, st.dr.dnm - 1), ' ', 0, 1);                  % [read data, delimiter, row offset, column offset]
+% t.p2       = reshape(clb(st.dr.cam + 1, 1 : 12), [4, 3])'; t.p2(4, :) = [0 0 0 1];                  % load 3x4 P2 camera calibration matrix
+% t.rct      = reshape(clb(5, 1 : 9), [3, 3])'; t.rct(:, 4) = 0; t.rct(4,:) = [0 0 0 1];              % load 3x3 image calibration matrix
+% t.v2c      = reshape(clb(6, 1 : 12), [4, 3])'; t.v2c(4,:) = [0 0 0 1];                              % load 3x4 velodyne to camera matrix (R|t)
+% t.clb      = t.p2 * t.rct * t.v2c; st.dt.clb = t.clb(1:4, 1:3)';                                    % project velodyne points to image plane
 %% pose
 trm        = load(sprintf('%s/%04d.txt', fullfile(st.dr.mdr, st.dr.dst, 'pose_lio_kitti'), st.dr.dnm - 1));       % read from directory of poses           
 st.dt.pose = trm;                                                                              % transformation matrix in camera coordinate

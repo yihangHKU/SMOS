@@ -53,13 +53,13 @@ ins.grd         = ((hst.pts(:,1) > st.vm.xb) & (hst.pts(:,1) < st.vm.xf) & ...  
                   (hst.pts(:,3) > st.vm.zd) & (hst.pts(:,3) < st.vm.zu));
 hst.pts         = hst.pts(ins.grd, 1:3);                                             % velodyne points in local grid           
 %% incorporate image and color data [pts col ref pxs]
-pixel           = hst.pts * st.dt.clb;                                               % velodyne points on image plane
-pixel(:, 1)     = pixel(:, 1)./pixel(:, 3); pixel(:, 2) = pixel(:, 2)./pixel(:, 3);  % point's x & y are cor. to image's c & nr - r (nr: nnumber of raws)
-pixel           = round(pixel(:, 1:2));                                              % interpolate (it is not that much precise, round is enough!)
-image           = imread(sprintf('%s/%06d.png', st.dr.img, frame - 1));              % load image (number of frames in each seq.)
-ins.img         = (pixel(:, 1) >= 1) & (pixel(:, 1) <= size(image, 2)) & (pixel ...  % index of pixels inside grid and image
-                  (:, 2) >= 1) & (pixel(:, 2) <= size(image, 1));
-hst.pts         = hst.pts(ins.img, :);                                               % velodyne points in local grid & image
+% pixel           = hst.pts * st.dt.clb;                                               % velodyne points on image plane
+% pixel(:, 1)     = pixel(:, 1)./pixel(:, 3); pixel(:, 2) = pixel(:, 2)./pixel(:, 3);  % point's x & y are cor. to image's c & nr - r (nr: nnumber of raws)
+% pixel           = round(pixel(:, 1:2));                                              % interpolate (it is not that much precise, round is enough!)
+% image           = imread(sprintf('%s/%06d.png', st.dr.img, frame - 1));              % load image (number of frames in each seq.)
+% ins.img         = (pixel(:, 1) >= 1) & (pixel(:, 1) <= size(image, 2)) & (pixel ...  % index of pixels inside grid and image
+%                   (:, 2) >= 1) & (pixel(:, 2) <= size(image, 1));
+% hst.pts         = hst.pts(ins.img, :);                                               % velodyne points in local grid & image
 
 end
 
